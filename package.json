@@ -2,14 +2,20 @@
   "name": "server",
   "version": "1.0.0",
   "description": "",
-  "main": "app.js",
+  "main": "dist/app.js",
+  "engines": {
+    "node": ">=10"
+  },
   "scripts": {
-    "dev": "NODE_ENV=development nodemon app.js",
+    "start": "NODE_ENV=development nodemon",
+    "start:prod": "NODE_ENV=production && npm run build && node dist/app.js",
+    "build": "node_modules/.bin/tsc",
+    "dev": "NODE_ENV=development nodemon",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
@@ -21,5 +27,18 @@
     "socket.io": "^2.3.0",
     "socket.io-emitter": "^3.1.1",
     "socket.io-redis": "^5.2.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.6",
+    "@types/express": "^4.17.2",
+    "@types/mongoose": "^5.5.30",
+    "@types/socket.io": "^2.1.4",
+    "@types/socket.io-redis": "^1.0.25",
+    "@typescript-eslint/eslint-plugin": "^2.7.0",
+    "@typescript-eslint/parser": "^2.7.0",
+    "eslint": "^6.6.0",
+    "eslint-config-google": "^0.14.0",
+    "ts-node": "^8.5.0",
+    "typescript": "^3.7.2"
   }
 }
