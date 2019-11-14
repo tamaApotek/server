@@ -1,5 +1,7 @@
-import mongoose, { Schema, Types, Document } from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
+
 import { User } from "../../model/user";
+import { UserRepository } from "../repository";
 
 const userSchema = new Schema({
   fullName: { type: String, indexes: ["text", 1] },
@@ -8,7 +10,6 @@ const userSchema = new Schema({
 });
 
 userSchema.set("autoIndex", false);
-userSchema.index({ fullName: "text" });
 
 const UserModel = mongoose.model<User & Document>("User", userSchema);
 
@@ -22,22 +23,48 @@ if (process.env.NODE_ENV !== "production") {
   });
 }
 
-const findById = async (id: string): Promise<User | null> => {
+const _serializeSingleUser = (user: User & Document): User => {
+  return Object.freeze<User>({
+    id: user.id || user._id,
+    fullName: user.fullName,
+    username: user.username,
+    email: user.email || "",
+    phoneNumber: user.phoneNumber || "",
+    role: user.role,
+    password: user.password
+  });
+};
+
+function _serializeUser(P: User & Document): User;
+function _serializeUser(P: (User & Document)[]): User[];
+function _serializeUser(data: any): any {
+  if (Array.isArray(data)) {
+    return data.map(_serializeSingleUser);
+  }
+  return _serializeSingleUser(data);
+}
+
+const findById: UserRepository["findById"] = async id => {
   const res = await UserModel.findById(id);
 
   if (!res) {
     return null;
   }
 
-  return Object.freeze<User>({
-    id: res.id,
-    fullName: res.fullName,
-    username: res.username,
-    email: res.email || "",
-    phoneNumber: res.phoneNumber || ""
-  });
+  return _serializeUser(res);
 };
 
-export default {
-  findById
+const findByUsername: UserRepository["findByUsername"] = async username => {
+  const res = await UserModel.findOne({ username });
+
+  if (!res) {
+    return null;
+  }
+
+  return _serializeUser(res);
 };
+
+export default Object.freeze<UserRepository>({
+  findById,
+  findByUsername
+});

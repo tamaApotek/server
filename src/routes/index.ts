@@ -1,5 +1,7 @@
 import { Router } from "express";
 
+import UserRouter from "./user";
+
 const router = Router();
 
 const patient = require("./patient");
@@ -13,5 +15,6 @@ router.get("/", (req, res, next) => {
 router.use("/patients", patient);
 router.use("/dokters", dokter);
 router.use("/queue", queue);
+router.use("/user", UserRouter);
 
 export default router;

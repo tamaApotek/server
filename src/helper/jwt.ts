@@ -1,15 +1,13 @@
 import * as jwt from "jsonwebtoken";
+import { TokenPayload } from "../model/tokenPayload";
 
 const SECRET_JWT = process.env.JWT!;
 
-export interface JWTPayload {
-  id: string;
-}
-function generateJWTToken(payload: JWTPayload) {
+export function generateJWTToken(payload: TokenPayload) {
   return jwt.sign(payload, SECRET_JWT);
 }
 
-function verifyToken(token: string) {
+export function verifyToken(token: string) {
   return jwt.verify(token, SECRET_JWT);
 }
 
