@@ -34,7 +34,7 @@ app.use(errorHandler);
 const main = async () => {
   // Connect to database
   try {
-    await connectMongoDB();
+    const client = await connectMongoDB();
   } catch (error) {
     console.error(error);
     process.exit(1);
