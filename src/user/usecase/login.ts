@@ -1,9 +1,10 @@
-import { UserRepository } from "../repository";
-import { User } from "../../model/user";
+import { TokenPayload } from "../../model/tokenPayload";
+import { UserCredentialRepository } from "../../userCredential/repository";
+import { UserCredential } from "../../model/userCredential";
+
 import { ErrorCode } from "../../helper/errors";
 
 import errors from "../../constants/error";
-import { TokenPayload } from "../../model/tokenPayload";
 
 /**
  * User login by username and password
@@ -17,7 +18,7 @@ const login = async ({
   passwordValidator,
   tokenGenerator,
 
-  userRepository
+  userCredRepository
 }: {
   username: string;
   password: string;
@@ -25,11 +26,11 @@ const login = async ({
   passwordValidator: (p: string, hashed: string) => boolean;
   tokenGenerator: (payload: TokenPayload) => string;
 
-  userRepository: UserRepository;
+  userCredRepository: UserCredentialRepository;
 }) => {
-  let user: User | null = null;
+  let user: UserCredential | null = null;
   try {
-    user = await userRepository.findByUsername(username);
+    user = await userCredRepository.findByUsername(username);
   } catch (error) {
     throw error;
   }

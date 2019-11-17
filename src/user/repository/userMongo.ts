@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-import { User } from "../../model/user";
+import { User } from "../../model/userProfile";
 import { UserRepository } from "../repository";
 
 const userSchema = new Schema({

@@ -1,8 +1,8 @@
+import { Express } from "express";
+
 import * as https from "https";
 import * as fs from "fs";
 import * as path from "path";
-
-import { Express } from "express";
 
 const createServerHTTPS = (app: Express) => {
   /**

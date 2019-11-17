@@ -1,8 +1,8 @@
-import { User } from "../model/user";
+import { UserProfile } from "../model/userProfile";
 
 export interface UserRepository {
-  findById(id: string): Promise<User | null>;
-  findByUsername(username: string): Promise<User | null>;
+  findById(id: string): Promise<UserProfile | null>;
+  findByUsername(username: string): Promise<UserProfile | null>;
 }
 
 const makeUserRepository = (repository: UserRepository): UserRepository =>

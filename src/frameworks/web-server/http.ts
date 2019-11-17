@@ -1,5 +1,5 @@
-import * as http from "http";
 import { Express } from "express";
+import * as http from "http";
 
 const createServerHTTP = (app: Express) => {
   const server = http.createServer(app);
