@@ -12,7 +12,7 @@ export interface AuthProvider {
  * User can has multiple email address to login,
  * and login through external provider (e.g. google)
  */
-export interface UserCredential {
+export interface Auth {
   id: string;
   displayName: string;
   username: string;

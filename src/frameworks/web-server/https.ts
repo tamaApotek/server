@@ -17,7 +17,7 @@ const createServerHTTPS = (app: Express) => {
   };
 
   const server = https.createServer(option, app);
-  const port = process.env.PORT || 8080;
+  const port = process.env.PORT_HTTPS || 8080;
 
   return new Promise<https.Server>((resolve, reject) => {
     server.listen(port, () => {

@@ -1,48 +1,92 @@
-import { TokenPayload } from "../model/tokenPayload";
+import { AuthRepository } from "../auth/repository";
+import { UserRepository } from "../user/repository";
+import { User } from "../model/user";
+import { Auth } from "../model/auth";
 
-import { UserCredentialRepository } from "../userCredential/repository";
-import { UserProfileRepository } from "../userProfile/repository";
+import { ErrorCode } from "../helper/errors";
 
-import { UserCredential } from "../model/userCredential";
-import { UserProfile } from "../model/userProfile";
-
-import login from "./usecase/login";
-import registerByUsernameAndPassword from "./usecase/registerByUsernameAndPassword";
-
-type passwordValidator = (password: string, hashed: string) => boolean;
-type passwordEncriptor = (password: string) => string;
+import errors from "../constants/error";
 
 export interface UserUsecase {
-  /**
-   * @return token
-   */
-  login(P: { username: string; password: string }): Promise<string>;
-  /**
-   * Register new user with username and password
-   * If successful send token to user
-   *
-   * @return User ID
-   */
-  registerByUsernameAndPassword(P: {
-    userCred: UserCredential;
-    userProfile: UserProfile;
-  }): Promise<string>;
+  create(userCred: Auth, userProfile: User): Promise<void>;
+
+  /** login using username and password */
+  login(P: {
+    username: string;
+    password: string;
+  }): Promise<{ profile: User; token: string }>;
 }
 
-const makeUserUsecase = (r: {
-  passwordValidator: passwordValidator;
-  passwordEncriptor: passwordEncriptor;
+export default function makeUserUsecase(repos: {
+  authRepository: AuthRepository;
+  userRepository: UserRepository;
+}): UserUsecase {
+  const { authRepository, userRepository } = repos;
+  return {
+    create: async (userCred, userProfile) => {
+      const exists = await authRepository.findByUsername(userCred.username);
+      if (exists) {
+        const error = new ErrorCode(
+          errors.INVALID,
+          "User with this username already exists"
+        );
+        throw error;
+      }
 
-  tokenGenerator: (payload: TokenPayload) => string;
+      const hashed = authRepository.hashPassword(userCred.password);
 
-  userCredRepository: UserCredentialRepository;
-  userProfileRepository: UserProfileRepository;
-}) => {
-  return Object.freeze<UserUsecase>({
-    login: p => login({ ...p, ...r }),
-    registerByUsernameAndPassword: p =>
-      registerByUsernameAndPassword({ ...p, ...r })
-  });
-};
+      let userID = "";
+      try {
+        userID = await authRepository.registerByUsernameAndPassword({
+          username: userCred.username,
+          password: hashed
+        });
+      } catch (error) {
+        console.error(error);
+        const err = new ErrorCode(errors.INTERNAL, "Internal serval error");
+        throw err;
+      }
 
-export default makeUserUsecase;
+      userProfile.id = userID;
+
+      try {
+        await userRepository.createUser(userProfile);
+      } catch (error) {
+        console.error(error);
+        await authRepository.removeById(userID);
+
+        const err = new ErrorCode(errors.INTERNAL, "Internal serval error");
+        throw err;
+      }
+
+      return;
+    },
+
+    login: async ({ username, password }) => {
+      const auth = await authRepository.findByUsername(username);
+      if (!auth) {
+        const error = new ErrorCode(
+          errors.NOT_FOUND,
+          "No user with this username"
+        );
+        throw error;
+      }
+
+      const isMatch = authRepository.verifyPassword(password, auth.password);
+      if (!isMatch) {
+        const error = new ErrorCode(errors.INVALID, "Wrong password");
+        throw error;
+      }
+
+      const user = await userRepository.findByUsername(username);
+      if (!user) {
+        const error = new ErrorCode(errors.NOT_FOUND, "User not found");
+        throw error;
+      }
+
+      const token = authRepository.generateToken({ id: user.id });
+
+      return { profile: user, token };
+    }
+  };
+}

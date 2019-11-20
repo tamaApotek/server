@@ -8,8 +8,14 @@ export interface Schedule {
   endMinute: number;
 }
 
+/**
+ * DoctorSchedule represent doctor and team's schedule
+ */
 export interface DoctorSchedule {
+  id: string;
+  /** user-id */
   doctorID: string;
+  /** user-id */
   assistants: string[];
   schedules: Schedule[];
 }

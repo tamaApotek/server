@@ -12,12 +12,10 @@ import createServerHTTP from "./frameworks/web-server/http";
 import connectMongoDB from "./frameworks/database/mongodb";
 import createSocket from "./frameworks/socket/socket-io";
 
-import makeUserCredentialRepository from "./userCredential/repository";
+import makeAuthRepository from "./auth/repository";
 import makeUserUsecase from "./user/usecase";
-import { comparePassword, hashPassword } from "./helper/bcrypt";
-import { generateJWTToken } from "./helper/jwt";
 import makeUserRouter from "./routes/user.routes";
-import makeUserProfileRepository from "./userProfile/repository";
+import makeUserRepository from "./user/repository";
 
 const main = async () => {
   let mongoose: typeof import("mongoose");
@@ -30,18 +28,13 @@ const main = async () => {
   }
 
   // Repositories / entities
-  const userCredRepository = await makeUserCredentialRepository(mongoose);
-  const userProfileRepository = await makeUserProfileRepository(mongoose);
+  const authRepository = await makeAuthRepository(mongoose);
+  const userRepository = await makeUserRepository(mongoose);
 
   // Usecases / interactor
   const userUsecase = makeUserUsecase({
-    passwordValidator: comparePassword,
-    passwordEncriptor: hashPassword,
-
-    tokenGenerator: generateJWTToken,
-
-    userCredRepository,
-    userProfileRepository
+    authRepository,
+    userRepository
   });
 
   // Routes handlers
