@@ -41,6 +41,29 @@ npm run start:prod
 npm run test
 ```
 
+## API
+
+<!-- | /patient            | GET    | -                                      | `doctor:username` | `token` | Find All patient by doctor         | -->
+<!-- | /patient/:username  | GET    | -                                      | -                 | `token` | Find patient profile by username   | -->
+
+| End Point           | Method | Body                                   | Query             | Header  | Desc                               |
+| ------------------- | ------ | -------------------------------------- | ----------------- | ------- | ---------------------------------- |
+| /user               | POST   | `username: string`, `password: string` | -                 | -       | Register                           |
+| /user/login         | POST   | `username: string`, `password: string` | -                 | -       | Login                              |
+|                     |        |                                        |                   |         |                                    |
+| /doctor             | GET    | -                                      | -                 | `token` | Find All doctor                    |
+| /doctor/:username   | GET    | -                                      | -                 | `token` | Find doctor profile by username    |
+|                     |        |                                        |                   |         |                                    |
+| /schedule/:username | POST   | `doctor schedule`                      | -                 | `token` | Add doctor schedule by username    |
+| /schedule/:username | PUT    | `doctor schedule`                      | -                 | `token` | Edit doctor schedule by username   |
+| /schedule/:username | DELETE | `doctor schedule`                      | -                 | `token` | Remove doctor schedule by username |
+| /schedule/:username | GET    | -                                      | -                 | `token` | Find doctor schedule by username   |
+|                     |        |                                        |                   |         |                                    |
+| /queue              | POST   | `doctorID, patient profile`            | -                 | `token` | Add queue                          |
+| /queue?doctor       | GET    |                                        | `doctor:username` | `token` | Find all queue of doctor,          |
+| /queue/:id          | PUT    | `queue status`                         | -                 | `token` | Update queue status with id        |
+| /queue/:id          | GET    | -                                      | -                 | `token` | Get queue status with id           |
+
 ## Author
 
 👤 **Restu** [@/restuu](https://github.com/restuu)
