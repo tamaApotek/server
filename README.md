@@ -51,9 +51,13 @@ Add new doctor.
 Body
 
 ```json
-{
+Body {
   "fullName": "John Doe",
   "specialist": "specialist-id"
+}
+
+Headers {
+  "token": "token"
 }
 ```
 

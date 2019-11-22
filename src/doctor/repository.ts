@@ -2,6 +2,8 @@ import { Doctor } from "../model/doktor";
 import { Document } from "mongoose";
 
 export interface DoctorRepository {
+  /** return doctor-id */
+  addDoctor(doctor: Doctor): Promise<string>;
   findSpecialist(specialistID: string): Promise<Doctor[]>;
 }
 
@@ -46,6 +48,11 @@ export default async function makeDoctorRepository(
   }
 
   return {
+    addDoctor: async (doctor: Doctor) => {
+      const res = await DoctorModel.create(doctor);
+      return res.id;
+    },
+
     findSpecialist: async specialistID => {
       const res = await DoctorModel.find({ specialistID });
 

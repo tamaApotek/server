@@ -4,6 +4,27 @@ import { DoctorUsecase } from "../doctor/usecase";
 
 import authMiddleware from "../middleware/auth";
 import userRole from "../constants/userRole";
+import { Doctor } from "../model/doktor";
+import { ErrorCode } from "../helper/errors";
+import errors from "../constants/error";
+
+const _makeDoctor = (doctor: Doctor): Doctor => {
+  if (!doctor.specialistID) {
+    throw new ErrorCode(errors.INVALID, "No Specialist provided");
+  }
+  if (!doctor.fullName) {
+    throw new ErrorCode(errors.INVALID, "No Doctor Name Provided");
+  }
+
+  return {
+    id: doctor.id || "",
+    uid: doctor.uid || null,
+    username: doctor.username || null,
+    specialistID: doctor.specialistID,
+    fullName: doctor.fullName.trim(),
+    title: (doctor.title || "").trim()
+  };
+};
 
 export default function makeDoctorRouter({
   router = Router(),
@@ -14,6 +35,27 @@ export default function makeDoctorRouter({
   userUsecase: UserUsecase;
   doctorUsecase: DoctorUsecase;
 }) {
+  const addDoctor: RequestHandler = async (req, res, next) => {
+    let doctor: Doctor;
+    try {
+      doctor = _makeDoctor(req.body);
+    } catch (error) {
+      next(error);
+      return;
+    }
+
+    let doctorID = "";
+    try {
+      doctorID = await doctorUsecase.addDoctor(doctor);
+    } catch (error) {
+      next(error);
+      return;
+    }
+
+    res.status(200).json({ doctorID });
+    return;
+  };
+
   const findSpecialist: RequestHandler = async (req, res, next) => {
     try {
       const specialistID = req.params.specialistID;
@@ -30,6 +72,7 @@ export default function makeDoctorRouter({
 
   router.use(authMiddleware);
 
+  router.post("/", addDoctor);
   router.get("/:specialistID", findSpecialist);
 
   return router;
