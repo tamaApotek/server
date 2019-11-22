@@ -13,6 +13,7 @@ export default function makeUserRouter({
 }): Router {
   const userController = makeUserController({ userUsecase });
 
+  router.post("/", userController.register);
   router.post("/login", userController.login);
 
   return router;

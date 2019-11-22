@@ -7,7 +7,7 @@ import errors from "../constants/error";
  */
 export interface User {
   /** user auth id */
-  id: string;
+  uid: string;
   fullName: string;
   username: string;
   role: UserRole;

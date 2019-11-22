@@ -1,7 +1,7 @@
 import { User } from "../model/user";
-import { DoctorSchedule } from "../model/doctorSchedule";
+import { Schedule } from "../model/schedule";
 
 export interface AppointmentUsecase {
   findAllDoctor(): Promise<User[] | null>;
-  findDoctorSchedules(doctorID: string): Promise<DoctorSchedule>;
+  findDoctorSchedules(doctorID: string): Promise<Schedule>;
 }

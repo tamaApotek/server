@@ -14,7 +14,7 @@ export interface AuthProvider {
  */
 export interface Auth {
   id: string;
-  displayName: string;
+  fullName: string;
   username: string;
   password: string;
   phoneNumber: string | null;

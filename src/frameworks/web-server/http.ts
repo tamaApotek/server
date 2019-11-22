@@ -3,7 +3,7 @@ import * as http from "http";
 
 const createServerHTTP = (app: Express) => {
   const server = http.createServer(app);
-  const port = process.env.PORT_HTTP || 8080;
+  const port = process.env.PORT || 8080;
 
   return new Promise<http.Server>((resolve, reject) => {
     server.listen(port, () => {

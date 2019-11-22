@@ -1,8 +1,8 @@
 import { User } from "../model/user";
 
-export default function makeUser(user: User): User {
+export default function userSerializer(user: User): User {
   return {
-    id: user.id || "",
+    uid: user.uid || "",
     fullName: user.fullName.trim(),
     username: user.username.trim(),
     role: user.role,

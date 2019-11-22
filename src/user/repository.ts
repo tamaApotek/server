@@ -1,11 +1,13 @@
-import buildMakeUser, { User } from "../model/user";
-import { Document, SchemaTypes } from "mongoose";
+import { Document } from "mongoose";
 
-const makeUser = buildMakeUser({ emailValidator: s => true });
+import { User } from "../model/user";
+import userSerializer from "../serializer/user";
+import { UserRole } from "../constants/userRole";
 
 export interface UserRepository {
   createUser(user: User): Promise<void>;
   findByUsername(username: string): Promise<User | null>;
+  findAllByRole(role: UserRole): Promise<User[]>;
 }
 
 async function makeUserRepository(
@@ -13,7 +15,7 @@ async function makeUserRepository(
 ): Promise<UserRepository> {
   const userSchema = new mongoose.Schema(
     {
-      id: SchemaTypes.ObjectId,
+      uid: mongoose.Schema.Types.ObjectId,
       fullName: { type: String, required: true },
       username: { type: String, required: true },
       role: {
@@ -52,9 +54,14 @@ async function makeUserRepository(
       if (!res) {
         return null;
       }
-      res.id;
-      const user = makeUser(res);
+      res.uid;
+      const user = userSerializer(res);
       return user;
+    },
+
+    findAllByRole: async role => {
+      const res = await UserModel.find({ role });
+      return res.map(userSerializer);
     }
   };
 }

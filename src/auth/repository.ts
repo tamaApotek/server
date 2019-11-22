@@ -79,7 +79,7 @@ async function makeAuthRepository(
 
       return Object.freeze<Auth>({
         id: userCred.id,
-        displayName: userCred.displayName,
+        fullName: userCred.fullName,
         username: userCred.username,
         password: userCred.password,
         phoneNumber: userCred.phoneNumber,

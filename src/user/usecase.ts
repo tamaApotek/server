@@ -6,6 +6,7 @@ import { Auth } from "../model/auth";
 import { ErrorCode } from "../helper/errors";
 
 import errors from "../constants/error";
+import { UserRole } from "../constants/userRole";
 
 export interface UserUsecase {
   create(userCred: Auth, userProfile: User): Promise<void>;
@@ -15,6 +16,8 @@ export interface UserUsecase {
     username: string;
     password: string;
   }): Promise<{ profile: User; token: string }>;
+
+  findAllByRole(role: UserRole): Promise<User[]>;
 }
 
 export default function makeUserUsecase(repos: {
@@ -47,7 +50,7 @@ export default function makeUserUsecase(repos: {
         throw err;
       }
 
-      userProfile.id = userID;
+      userProfile.uid = userID;
 
       try {
         await userRepository.createUser(userProfile);
@@ -84,9 +87,14 @@ export default function makeUserUsecase(repos: {
         throw error;
       }
 
-      const token = authRepository.generateToken({ id: user.id });
+      const token = authRepository.generateToken({ id: user.uid });
 
       return { profile: user, token };
+    },
+
+    findAllByRole: async role => {
+      const users = await userRepository.findAllByRole(role);
+      return users;
     }
   };
 }
