@@ -19,6 +19,8 @@ import makeUserRepository from "./user/repository";
 import makeDoctorRepository from "./doctor/repository";
 import makeDoctorUsecase from "./doctor/usecase";
 import makeDoctorRouter from "./routes/doctor.routes";
+import makeEmailRepository from "./email/repository";
+import setSendgrid from "./frameworks/email/sendgrid";
 
 const main = async () => {
   let mongoose: typeof import("mongoose");
@@ -30,7 +32,16 @@ const main = async () => {
     throw error;
   }
 
+  let sendGrid: typeof import("@sendgrid/mail");
+  try {
+    sendGrid = setSendgrid();
+  } catch (error) {
+    throw error;
+  }
+
   // Repositories / entities
+  const emailRepository = makeEmailRepository(sendGrid);
+
   const authRepository = await makeAuthRepository(mongoose);
   const userRepository = await makeUserRepository(mongoose);
   const doctorRepository = await makeDoctorRepository(mongoose);
@@ -38,7 +49,8 @@ const main = async () => {
   // Usecases / interactor
   const userUsecase = makeUserUsecase({
     authRepository,
-    userRepository
+    userRepository,
+    doctorRepository
   });
   const doctorUsecase = makeDoctorUsecase({ doctorRepository });
 
