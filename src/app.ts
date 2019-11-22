@@ -64,7 +64,14 @@ const main = async () => {
   let server: http.Server | https.Server;
   try {
     if (process.env.NODE_ENV === "production") {
-      server = await createServerHTTPS(app);
+      const port = process.env.PORT;
+      if (port === "443") {
+        server = await createServerHTTPS(app);
+      } else if (port === "80") {
+        server = await createServerHTTP(app);
+      } else {
+        throw new Error("Invalid port");
+      }
     } else {
       server = await createServerHTTP(app);
     }
