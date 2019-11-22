@@ -16,6 +16,9 @@ import makeAuthRepository from "./auth/repository";
 import makeUserUsecase from "./user/usecase";
 import makeUserRouter from "./routes/user.routes";
 import makeUserRepository from "./user/repository";
+import makeDoctorRepository from "./doctor/repository";
+import makeDoctorUsecase from "./doctor/usecase";
+import makeDoctorRouter from "./routes/doctor.routes";
 
 const main = async () => {
   let mongoose: typeof import("mongoose");
@@ -30,15 +33,18 @@ const main = async () => {
   // Repositories / entities
   const authRepository = await makeAuthRepository(mongoose);
   const userRepository = await makeUserRepository(mongoose);
+  const doctorRepository = await makeDoctorRepository(mongoose);
 
   // Usecases / interactor
   const userUsecase = makeUserUsecase({
     authRepository,
     userRepository
   });
+  const doctorUsecase = makeDoctorUsecase({ doctorRepository });
 
   // Routes handlers
   const userRouter = makeUserRouter({ userUsecase });
+  const doctorRouter = makeDoctorRouter({ userUsecase, doctorUsecase });
 
   // Build app
   const app = express();
@@ -59,6 +65,7 @@ const main = async () => {
   });
 
   app.use(`/${baseURL}/user`, userRouter);
+  app.use(`/${baseURL}/doctor`, doctorRouter);
 
   // Run server
   let server: http.Server | https.Server;

@@ -43,6 +43,30 @@ npm run test
 
 ## API
 
+### `/doctor`
+
+#### POST
+
+Add new doctor.
+Body
+
+```json
+{
+  "fullName": "John Doe",
+  "specialist": "specialist-id"
+}
+```
+
+---
+
+### `/doctor/:specialistID`
+
+#### GET
+
+Get all doctors with `specialistID`
+
+---
+
 <!-- | /patient            | GET    | -                                      | `doctor:username` | `token` | Find All patient by doctor         | -->
 <!-- | /patient/:username  | GET    | -                                      | -                 | `token` | Find patient profile by username   | -->
 
@@ -51,6 +75,7 @@ npm run test
 | /user                   | POST   | `username: string`, `password: string` | -                 | -       | Register                           |
 | /user/login             | POST   | `username: string`, `password: string` | -                 | -       | Login                              |
 |                         |        |                                        |                   |         |                                    |
+| /doctor                 | POST   | `fullName: string`, `specialist`       | -                 | `token` | Find All doctor                    |
 | /doctor                 | GET    | -                                      | -                 | `token` | Find All doctor                    |
 | /doctor/:username       | GET    | -                                      | -                 | `token` | Find doctor profile by username    |
 | /doctor/:username/queue | GET    | -                                      | -                 | `token` | Find doctor queue list by username |
