@@ -43,6 +43,35 @@ npm run test
 
 ## API
 
+### `/user`
+
+#### POST
+
+Add new user
+
+```json
+Body {
+  "username": "username",
+  "password": "password",
+  "role": "patient",
+  "fullName": "John Doe"
+}
+```
+
+### `/user/:username`
+
+#### PUT
+
+##### `?action=change-password`
+
+Update existing password
+
+##### `?action=forgot-password`
+
+Reset existing password and generate random password
+
+---
+
 ### `/doctor`
 
 #### POST

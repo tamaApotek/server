@@ -6,7 +6,9 @@ import { Auth } from "../model/auth";
 import { ErrorCode } from "../helper/errors";
 
 import errors from "../constants/error";
-import { UserRole } from "../constants/userRole";
+import userRole, { UserRole } from "../constants/userRole";
+import { DoctorRepository } from "../doctor/repository";
+import { Doctor } from "../model/doktor";
 
 export interface UserUsecase {
   create(userCred: Auth, userProfile: User): Promise<void>;
@@ -23,8 +25,9 @@ export interface UserUsecase {
 export default function makeUserUsecase(repos: {
   authRepository: AuthRepository;
   userRepository: UserRepository;
+  doctorRepository: DoctorRepository;
 }): UserUsecase {
-  const { authRepository, userRepository } = repos;
+  const { authRepository, userRepository, doctorRepository } = repos;
   return {
     create: async (userCred, userProfile) => {
       const exists = await authRepository.findByUsername(userCred.username);
@@ -60,6 +63,22 @@ export default function makeUserUsecase(repos: {
 
         const err = new ErrorCode(errors.INTERNAL, "Internal serval error");
         throw err;
+      }
+
+      if (userProfile.role === userRole.DOCTOR) {
+        try {
+          const doctor: Doctor = {
+            username: userCred.username,
+            uid: userID,
+            title: "",
+            specialistID: "",
+            id: userID,
+            fullName: userProfile.fullName
+          };
+          await doctorRepository.addDoctor(doctor);
+        } catch (error) {
+          throw error;
+        }
       }
 
       return;
