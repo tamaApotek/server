@@ -1,8 +1,7 @@
 import { RequestHandler } from "express";
+import { auth } from "firebase-admin";
 
-import { verifyToken } from "../helper/jwt";
-
-const authMiddleware: RequestHandler = (req, res, next) => {
+const authMiddleware: RequestHandler = async (req, res, next) => {
   let token = req.headers.token as string;
   if (!token) {
     res.sendStatus(403);
@@ -12,7 +11,7 @@ const authMiddleware: RequestHandler = (req, res, next) => {
     token = token.slice("bearer ".length);
   }
   try {
-    const decode = verifyToken(token);
+    const decode = await auth().verifyIdToken(token);
     res.locals.user = decode;
     next();
   } catch (err) {
