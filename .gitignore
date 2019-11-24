@@ -1,4 +1,5 @@
 .env
+.config/
 
 # ignore build
 dist/

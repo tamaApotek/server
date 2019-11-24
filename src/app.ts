@@ -21,8 +21,11 @@ import makeDoctorUsecase from "./doctor/usecase";
 import makeDoctorRouter from "./routes/doctor.routes";
 import makeEmailRepository from "./email/repository";
 import setSendgrid from "./frameworks/email/sendgrid";
+import initFirebase from "./frameworks/firebase/firebase";
 
 const main = async () => {
+  const firebase = initFirebase();
+
   let mongoose: typeof import("mongoose");
   // Connect to database
   try {
