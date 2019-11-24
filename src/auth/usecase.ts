@@ -1,9 +1,8 @@
 import { TokenPayload } from "../model/tokenPayload";
 import { AuthRepository } from "./repository";
-import { verifyToken } from "../helper/jwt";
 
 export interface AuthUsecase {
-  verifyToken(token: string): TokenPayload;
+  verifyToken(token: string): Promise<TokenPayload>;
 }
 
 export default function makeAuthUsecase(repos: {
@@ -13,6 +12,6 @@ export default function makeAuthUsecase(repos: {
 }): AuthUsecase {
   const { authRepository, jwt, bcript } = repos;
   return {
-    verifyToken: verifyToken
+    verifyToken: authRepository.verifyToken
   };
 }
