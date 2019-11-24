@@ -17,8 +17,10 @@ const makeUser = buildMakeUser({
 export interface UserController {
   /** register with username and password */
   register: RequestHandler;
+
   /** login with username and password */
-  login: RequestHandler;
+  // handled by firebase client sdk
+  // login: RequestHandler;
 
   findAllDoctors: RequestHandler;
 }
@@ -39,12 +41,12 @@ function makeUserController({
         return;
       }
       const userCred: Auth = {
-        id: "",
-        username: userProfile.username,
-        phoneNumber: req.body.phoneNumber || null,
+        uid: "",
+        email: req.body.email,
+        disabled: false,
+        phoneNumber: req.body.phoneNumber || "",
         password: req.body.password,
-        fullName: userProfile.fullName,
-        providers: []
+        displayName: userProfile.fullName
       };
 
       if (!userCred.password) {
@@ -64,15 +66,15 @@ function makeUserController({
       return;
     },
 
-    login: async (req, res, next) => {
-      try {
-        let token = userUsecase.login({ ...req.body });
-        res.status(200).json({ token });
-      } catch (error) {
-        next(error);
-        return;
-      }
-    },
+    // login: async (req, res, next) => {
+    //   try {
+    //     let token = userUsecase.loginWithEmailAndPassword({ ...req.body });
+    //     res.status(200).json({ token });
+    //   } catch (error) {
+    //     next(error);
+    //     return;
+    //   }
+    // },
 
     findAllDoctors: async (req, res, next) => {
       try {

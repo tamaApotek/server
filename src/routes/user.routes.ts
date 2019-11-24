@@ -14,7 +14,8 @@ export default function makeUserRouter({
   const userController = makeUserController({ userUsecase });
 
   router.post("/", userController.register);
-  router.post("/login", userController.login);
+  // handled by firebase client sdk
+  // router.post("/login", userController.login);
 
   return router;
 }

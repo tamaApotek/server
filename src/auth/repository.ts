@@ -1,110 +1,74 @@
-import { Document } from "mongoose";
-
+import { auth } from "firebase-admin";
 import { Auth } from "../model/auth";
 import { TokenPayload } from "../model/tokenPayload";
 
-import { generateJWTToken, verifyToken } from "../helper/jwt";
 import { hashPassword, comparePassword } from "../helper/bcrypt";
 
 export interface AuthRepository {
-  /**
-   * @return User ID
-   */
-  registerByUsernameAndPassword(P: {
-    username: string;
-    password: string;
-  }): Promise<string>;
-  // /**
-  //  * @return User ID
-  //  */
-  // loginByUsernameAndPassword(P: {
-  //   username: string;
-  //   password: string;
-  // }): Promise<string>;
-
-  findByUsername(username: string): Promise<Auth | null>;
+  create(userCred: Omit<Auth, "uid">): Promise<string>;
+  findById(uid: string): Promise<Auth | null>;
 
   removeById(id: string): Promise<void>;
 
-  /** generate token using JWT */
-  generateToken(payload: TokenPayload): string;
+  /** generate token using JWT. To be used when user is not from firebase auth */
+  generateToken(payload: TokenPayload): Promise<string>;
 
-  /** validate JWT Token, throw error if invalid */
-  verifyToken(token: string): TokenPayload;
+  /** validate JWT Token from user authenticated from client sdk, throw error if invalid */
+  verifyToken(token: string): Promise<TokenPayload>;
 
   /** hash password using bcriptjs */
-  hashPassword(password: string): string;
+  // hashPassword(password: string): string;
 
   /** verify password using bcriptjs */
-  verifyPassword(password: string, hashed: string): boolean;
+  // verifyPassword(password: string, hashed: string): boolean;
 }
 
-async function makeAuthRepository(
-  mongoose: typeof import("mongoose")
-): Promise<AuthRepository> {
-  // Build Auth Schema
-  const authSchema = new mongoose.Schema({
-    displayName: { type: String },
-    username: { type: String, required: true, unique: true, index: true },
-    password: { type: String, required: true },
-    phoneNumber: {
-      type: String,
-      default: null,
-      index: true,
-      sparse: true,
-      unique: true
-    },
-    providers: [
-      {
-        name: String,
-        email: String
-      }
-    ]
-  });
-
-  authSchema.set("autoIndex", false);
-
-  const AuthModel = mongoose.model<Auth & Document>("Auth", authSchema);
-
-  if (process.env.NODE_ENV !== "production") {
-    await AuthModel.ensureIndexes();
-  }
-
+async function makeAuthRepository(auth: auth.Auth): Promise<AuthRepository> {
   return {
-    findByUsername: async username => {
-      const userCred = await AuthModel.findOne({ username });
+    create: async userCred => {
+      const res = await auth.createUser(userCred);
+
+      return res.uid;
+    },
+
+    findById: async uid => {
+      const userCred = await auth.getUser(uid);
       if (!userCred) {
         return null;
       }
 
-      return Object.freeze<Auth>({
-        id: userCred.id,
-        fullName: userCred.fullName,
-        username: userCred.username,
-        password: userCred.password,
-        phoneNumber: userCred.phoneNumber,
-        providers: userCred.providers
-      });
-    },
-
-    registerByUsernameAndPassword: async ({ username, password }) => {
-      const res = await AuthModel.create({ username, password });
-      return res.id;
+      return {
+        uid: userCred.uid,
+        displayName: userCred.displayName || "",
+        email: userCred.email || "",
+        phoneNumber: userCred.phoneNumber || "",
+        disabled: userCred.disabled
+      };
     },
 
     removeById: async id => {
-      await AuthModel.findByIdAndRemove(id);
+      await auth.deleteUser(id);
 
       return;
     },
 
-    generateToken: payload => generateJWTToken(payload),
+    generateToken: async payload => {
+      const otherPayload = { ...payload };
+      delete otherPayload.id;
+      const token = await auth.createCustomToken(payload.id, otherPayload);
+      return token;
+    },
 
-    verifyToken: token => verifyToken(token) as TokenPayload,
+    verifyToken: async token => {
+      const decoded = await auth.verifyIdToken(token);
+      return {
+        id: decoded.uid
+      };
+    }
 
-    hashPassword: hashPassword,
+    // hashPassword: hashPassword,
 
-    verifyPassword: comparePassword
+    // verifyPassword: comparePassword
   };
 }
 

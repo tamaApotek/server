@@ -13,11 +13,12 @@ import { Doctor } from "../model/doktor";
 export interface UserUsecase {
   create(userCred: Auth, userProfile: User): Promise<void>;
 
-  /** login using username and password */
-  login(P: {
-    username: string;
-    password: string;
-  }): Promise<{ profile: User; token: string }>;
+  /** login using email with password */
+  // handled by firebase client sdk
+  // loginWithEmailAndPassword(P: {
+  //   email: string;
+  //   password: string;
+  // }): Promise<{ profile: User; token: string }>;
 
   findAllByRole(role: UserRole): Promise<User[]>;
 }
@@ -30,27 +31,47 @@ export default function makeUserUsecase(repos: {
   const { authRepository, userRepository, doctorRepository } = repos;
   return {
     create: async (userCred, userProfile) => {
-      const exists = await authRepository.findByUsername(userCred.username);
+      let exists = await userRepository.findByUsername(userProfile.username);
       if (exists) {
-        const error = new ErrorCode(
-          errors.INVALID,
-          "User with this username already exists"
-        );
+        const error = new ErrorCode(errors.INVALID, "Username already exists");
         throw error;
       }
 
-      const hashed = authRepository.hashPassword(userCred.password);
-
       let userID = "";
       try {
-        userID = await authRepository.registerByUsernameAndPassword({
-          username: userCred.username,
-          password: hashed
+        userID = await authRepository.create({
+          password: userCred.password,
+          disabled: false,
+          displayName: userCred.displayName,
+          phoneNumber: userCred.phoneNumber,
+          email: userCred.email
         });
       } catch (error) {
-        console.error(error);
-        const err = new ErrorCode(errors.INTERNAL, "Internal serval error");
-        throw err;
+        switch (error.code) {
+          case "auth/email-already-exists": {
+            const error = new ErrorCode(
+              errors.INVALID,
+              "User with this email already exists"
+            );
+            throw error;
+          }
+          case "auth/phone-number-already-exists": {
+            const error = new ErrorCode(
+              errors.INVALID,
+              "User with this phone number already exists"
+            );
+            throw error;
+          }
+          case "auth/invalid-password": {
+            const error = new ErrorCode(
+              errors.INVALID,
+              "Password must be at lease 6 characters"
+            );
+            throw error;
+          }
+          default:
+            throw error;
+        }
       }
 
       userProfile.uid = userID;
@@ -68,7 +89,7 @@ export default function makeUserUsecase(repos: {
       if (userProfile.role === userRole.DOCTOR) {
         try {
           const doctor: Doctor = {
-            username: userCred.username,
+            username: userProfile.username,
             uid: userID,
             title: "",
             specialistID: "",
@@ -84,32 +105,28 @@ export default function makeUserUsecase(repos: {
       return;
     },
 
-    login: async ({ username, password }) => {
-      const auth = await authRepository.findByUsername(username);
-      if (!auth) {
-        const error = new ErrorCode(
-          errors.NOT_FOUND,
-          "No user with this username"
-        );
-        throw error;
-      }
+    // handled by firebase client sdk
+    // loginWithEmailAndPassword: async ({ email, password }) => {
 
-      const isMatch = authRepository.verifyPassword(password, auth.password);
-      if (!isMatch) {
-        const error = new ErrorCode(errors.INVALID, "Wrong password");
-        throw error;
-      }
+    //   const userCred = await authRepository.(email);
+    //   if (!userCred) {
+    //     const error = new ErrorCode(
+    //       errors.NOT_FOUND,
+    //       "No user with this username"
+    //     );
+    //     throw error;
+    //   }
 
-      const user = await userRepository.findByUsername(username);
-      if (!user) {
-        const error = new ErrorCode(errors.NOT_FOUND, "User not found");
-        throw error;
-      }
+    //   const user = await userRepository.findByUsername(email);
+    //   if (!user) {
+    //     const error = new ErrorCode(errors.NOT_FOUND, "User not found");
+    //     throw error;
+    //   }
 
-      const token = authRepository.generateToken({ id: user.uid });
+    //   const token = authRepository.generateToken({ id: user.uid });
 
-      return { profile: user, token };
-    },
+    //   return { profile: user, token };
+    // },
 
     findAllByRole: async role => {
       const users = await userRepository.findAllByRole(role);

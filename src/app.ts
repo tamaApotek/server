@@ -45,7 +45,7 @@ const main = async () => {
   // Repositories / entities
   const emailRepository = makeEmailRepository(sendGrid);
 
-  const authRepository = await makeAuthRepository(mongoose);
+  const authRepository = await makeAuthRepository(firebase.auth());
   const userRepository = await makeUserRepository(mongoose);
   const doctorRepository = await makeDoctorRepository(mongoose);
 
