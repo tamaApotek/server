@@ -1,4 +1,4 @@
-# Welcome to Patient Queue Server 👋
+ # Welcome to Patient Queue Server 👋
 
 ![Version](https://img.shields.io/badge/version-1.0.0-blue.svg?cacheSeconds=2592000)
 
@@ -41,11 +41,13 @@ npm run start:prod
 npm run test
 ```
 
+___
+
 ## API
 
 ### `/user`
 
-#### POST
+*`POST`*
 
 Add new user
 
@@ -54,7 +56,8 @@ Body {
   "username": "username",
   "password": "password",
   "role": "patient",
-  "fullName": "John Doe"
+  "fullName": "John Doe",
+  "phoneNumber: "+62..." // [optional]
 }
 ```
 
@@ -62,9 +65,9 @@ Body {
 
 #### PUT
 
-##### `?action=change-password`
+##### `?action=reset-password`
 
-Update existing password
+Reset user password with a new one. User must be authenticated
 
 ##### `?action=forgot-password`
 
@@ -74,7 +77,7 @@ Reset existing password and generate random password
 
 ### `/doctor`
 
-#### POST
+*`POST`*
 
 Add new doctor.
 Body
@@ -92,11 +95,13 @@ Headers {
 
 ---
 
-### `/doctor/:specialistID`
+### `/doctor/:id`
 
 #### GET
 
-Get all doctors with `specialistID`
+Get doctor with `id`
+
+
 
 ---
 
