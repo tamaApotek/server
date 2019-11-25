@@ -1,11 +1,14 @@
 import { Router, RequestHandler } from "express";
+
 import { UserUsecase } from "../user/usecase";
 import { DoctorUsecase } from "../doctor/usecase";
 
 import { Doctor } from "../model/doktor";
+
+import { verifyToken } from "../helper/jwt";
 import { ErrorCode } from "../helper/errors";
+
 import errors from "../constants/error";
-import { AuthUsecase } from "../auth/usecase";
 
 const _makeDoctor = (doctor: Doctor): Doctor => {
   if (!doctor.specialistID) {
@@ -28,13 +31,11 @@ const _makeDoctor = (doctor: Doctor): Doctor => {
 export default function makeDoctorRouter({
   router = Router(),
   userUsecase,
-  doctorUsecase,
-  authUsecase
+  doctorUsecase
 }: {
   router?: Router;
   userUsecase: UserUsecase;
   doctorUsecase: DoctorUsecase;
-  authUsecase: AuthUsecase;
 }) {
   const addDoctor: RequestHandler = async (req, res, next) => {
     let doctor: Doctor;
@@ -71,7 +72,7 @@ export default function makeDoctorRouter({
     }
   };
 
-  router.use(authUsecase.verifyToken);
+  router.use(verifyToken);
 
   router.post("/", addDoctor);
   router.get("/:specialistID", findSpecialist);
