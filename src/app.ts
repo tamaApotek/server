@@ -79,8 +79,8 @@ const main = async () => {
     res.sendStatus(200);
   });
 
-  app.use(`/${baseURL}/user`, userRouter);
-  app.use(`/${baseURL}/doctor`, doctorRouter);
+  app.use(`/${baseURL}/users`, userRouter);
+  app.use(`/${baseURL}/doctors`, doctorRouter);
 
   // Run server
   let server: http.Server | https.Server;

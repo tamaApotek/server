@@ -101,9 +101,6 @@ export default function makeUserRouter({
     } catch (error) {
       next(error);
     }
-
-    if (!req) {
-    }
   };
 
   router.post("/", register);
@@ -114,7 +111,7 @@ export default function makeUserRouter({
 
   router.use(verifyToken);
 
-  router.put("/user/:id", update);
+  router.put("/:id", update);
 
   return router;
 }
