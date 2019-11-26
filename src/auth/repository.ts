@@ -16,6 +16,8 @@ export interface AuthRepository {
   /** validate JWT Token from user authenticated from client sdk, throw error if invalid */
   verifyToken(token: string): Promise<TokenPayload>;
 
+  resetPassword(uid: string, newPassword: string): Promise<void>;
+
   /** hash password using bcriptjs */
   // hashPassword(password: string): string;
 
@@ -64,6 +66,10 @@ async function makeAuthRepository(auth: auth.Auth): Promise<AuthRepository> {
       return {
         id: decoded.uid
       };
+    },
+
+    resetPassword: async (uid, newPassword) => {
+      await auth.updateUser(uid, { password: newPassword });
     }
 
     // hashPassword: hashPassword,

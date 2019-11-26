@@ -73,7 +73,7 @@ Reset user password with a new one. User must be authenticated
 
 Reset existing password and generate random password
 
----
+___
 
 ### `/doctor`
 
@@ -93,7 +93,7 @@ Headers {
 }
 ```
 
----
+___
 
 ### `/doctor/:id`
 
@@ -101,9 +101,21 @@ Headers {
 
 Get doctor with `id`
 
+```json
+Headers {
+  "token": "token"
+}
+```
 
+___
 
----
+### `/schedule`
+
+*`GET`*
+
+Get summary of all schedule of all doctor with today queue status
+
+___
 
 <!-- | /patient            | GET    | -                                      | `doctor:username` | `token` | Find All patient by doctor         | -->
 <!-- | /patient/:username  | GET    | -                                      | -                 | `token` | Find patient profile by username   | -->

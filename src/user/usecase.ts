@@ -12,6 +12,10 @@ import { Doctor } from "../model/doktor";
 
 export interface UserUsecase {
   create(userCred: Auth, userProfile: User): Promise<void>;
+  /**
+   * Reset user password with a new one. User must be authenticated
+   */
+  resetPassword(uid: string, newPassword: string): Promise<void>;
 
   /** login using email with password */
   // handled by firebase client sdk
@@ -103,6 +107,14 @@ export default function makeUserUsecase(repos: {
       }
 
       return;
+    },
+
+    resetPassword: async (uid, newPassword) => {
+      try {
+        await authRepository.resetPassword(uid, newPassword);
+      } catch (error) {
+        throw error;
+      }
     },
 
     // handled by firebase client sdk
