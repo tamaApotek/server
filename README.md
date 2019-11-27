@@ -1,4 +1,4 @@
- # Welcome to Patient Queue Server 👋
+# Welcome to Patient Queue Server 👋
 
 ![Version](https://img.shields.io/badge/version-1.0.0-blue.svg?cacheSeconds=2592000)
 
@@ -41,13 +41,13 @@ npm run start:prod
 npm run test
 ```
 
-___
+---
 
 ## API
 
-### `/user`
+### `/users`
 
-*`POST`*
+_`POST`_
 
 Add new user
 
@@ -61,7 +61,7 @@ Body {
 }
 ```
 
-### `/user/:username`
+### `/users/:id`
 
 #### PUT
 
@@ -69,18 +69,59 @@ Body {
 
 Reset user password with a new one. User must be authenticated
 
-##### `?action=forgot-password`
+<!-- ##### `?action=forgot-password`
 
-Reset existing password and generate random password
+Reset existing password and generate random password -->
 
-___
+---
 
-### `/doctor`
+### `/doctors`
 
-*`POST`*
+_`POST`_
 
 Add new doctor.
 Body
+
+```json
+Body {
+  "fullName": "John Doe",
+  "specialist": "specialist-id",
+  "title": ""
+
+}
+
+Headers {
+  "token": "token"
+}
+```
+
+_`GET`_
+
+Find all doctors
+
+```json
+Headers {
+  "token": "token"
+}
+```
+
+---
+
+### `/doctors/:id`
+
+_`GET`_
+
+Get doctor with `id`
+
+```json
+Headers {
+  "token": "token"
+}
+```
+
+_`PUT`_
+
+Update doctor profile
 
 ```json
 Body {
@@ -93,29 +134,149 @@ Headers {
 }
 ```
 
-___
+#### `?action=claim`
 
-### `/doctor/:id`
+Claim this doctor profile to new user
 
-#### GET
+```json
+Body {
+  "username": "username",
+  "password": "password",
+  "role": "patient",
+  "fullName": "John Doe",
+  "phoneNumber: "+62..." // [optional]
+}
+```
 
-Get doctor with `id`
+---
+
+### `/appointments?date=YYYY-MM-DD`
+
+_`GET`_
+
+Get summary of all appointment of all doctor with today queue status
 
 ```json
 Headers {
   "token": "token"
 }
+
+Response {
+  "data": [
+    {
+      "id": "doctor-id",
+      "fullName": "Doctor Name",
+      "degree": ["SpOG", "M. Kes"],
+      ""
+    }
+  ]
+}
 ```
 
-___
+---
 
-### `/schedule`
+### `/schedules/:id-:date/queue`
 
-*`GET`*
+#### Queue Status
 
-Get summary of all schedule of all doctor with today queue status
+- _re-register_ : waiting for patient to re-register to front desk
+- _waiting_ : patient has re-registered, waiting for call
+- _delayed_ : patient has re-registered but late, put into delayed list
+- _on-process_ : patient is with doctor
+- _void_ : patient never came
 
-___
+_`POST`_
+
+Add new queue for schedule with `:id` at date `:date`,
+Validate queue capacity by the time patient submit form
+
+```json
+Headers {
+  "token": "token"
+}
+
+Queue {
+  "date": "2019-11-11",
+  "scheduleID": "schedule-id",
+  "doctorID": "doctor-id",
+  "patientID": "user-id",
+  "patientName": "Foo Bar",
+  "validated": false,
+  "status": "re-register", // "waiting" | "on-process" | "delayed" | "void"
+  "createdAt": "timestamp",
+  "validatedAt": "timestamp", // re-register timestamp
+  "startAt": "timestamp", // called by doctor timestamp
+  "endAt": "timestamp", // finish with doctor timestamp
+  "queueNum": 0
+}
+```
+
+_*GET*_
+
+Get overall queue status for schedule `:id` at `:date`
+
+```json
+Headers {
+  "token": "token"
+}
+
+Response {
+  "maxQueue": 30,
+  "totalQueue": 29,
+  "currentQueue": 0,
+  "date": "2019-11-11",
+  "doctorID": "doctor-id",
+  "doctorName": "John Doe",
+  "status": "open" // "max-limit" | "canceled"
+}
+```
+
+---
+
+### `/schedules/:id-:date/queue/:num`
+
+_*GET*_
+
+Get queue info of schedule `:id` at `:date` with queue `:num`
+
+```json
+Headers {
+  "token": "token"
+}
+
+Queue {
+  "date": "2019-11-11",
+  "scheduleID": "schedule-id",
+  "doctorID": "doctor-id",
+  "patientID": "user-id",
+  "patientName": "Foo Bar",
+
+  "status": "re-register", // "waiting" | "delayed" | "void"
+  "queueNum": 0
+}
+```
+
+_*PUT*_ `?action=verify`
+
+Verify queue number
+
+```json
+Headers {
+  "token": "token"
+}
+
+Queue {
+  "date": "2019-11-11",
+  "scheduleID": "schedule-id",
+  "doctorID": "doctor-id",
+  "patientID": "user-id",
+  "patientName": "Foo Bar",
+  "validated": true,
+  "queueNum": 0
+}
+```
+
+---
 
 <!-- | /patient            | GET    | -                                      | `doctor:username` | `token` | Find All patient by doctor         | -->
 <!-- | /patient/:username  | GET    | -                                      | -                 | `token` | Find patient profile by username   | -->
