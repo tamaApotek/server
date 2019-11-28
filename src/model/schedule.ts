@@ -3,8 +3,8 @@
  */
 export interface Schedule {
   id: string;
-  /** user-id */
   doctorID: string;
+  doctorName: string;
   /** iso day week 1 ~ 7 */
   dayOfWeek: number;
   /** 0 ~ 23 */
@@ -17,4 +17,6 @@ export interface Schedule {
   endMinute: number;
   /** queue limit */
   limit: number;
+  /** open | close |  */
+  status: "open" | "close" | "holiday";
 }
