@@ -177,6 +177,24 @@ Response {
 
 ### `/schedules/:id-:date/queue`
 
+#### Queue
+
+```json
+Queue {
+  "date": "2019-11-11",
+  "scheduleID": "schedule-id",
+  "doctorID": "doctor-id",
+  "patientID": "user-id",
+  "patientName": "Foo Bar",
+  "status": "re-register", // "waiting" | "on-process" | "delayed" | "void"
+  "createdAt": "timestamp",
+  "validatedAt": "timestamp", // re-register timestamp
+  "startAt": "timestamp", // called by doctor timestamp
+  "endAt": "timestamp", // finish with doctor timestamp
+  "queueNum": 0
+}
+```
+
 #### Queue Status
 
 - _re-register_ : waiting for patient to re-register to front desk
@@ -188,14 +206,14 @@ Response {
 _`POST`_
 
 Add new queue for schedule with `:id` at date `:date`,
-Validate queue capacity by the time patient submit form
+Validate queue capacity by the time patient submit form [queue](####queue)
 
 ```json
 Headers {
   "token": "token"
 }
 
-Queue {
+Body {
   "date": "2019-11-11",
   "scheduleID": "schedule-id",
   "doctorID": "doctor-id",
@@ -227,7 +245,7 @@ Response {
   "date": "2019-11-11",
   "doctorID": "doctor-id",
   "doctorName": "John Doe",
-  "status": "open" // "max-limit" | "canceled"
+  "status": "open" // "max-limit" | "canceled" | "close"
 }
 ```
 
@@ -245,13 +263,16 @@ Headers {
 }
 
 Queue {
-  "date": "2019-11-11",
+   "date": "2019-11-11",
   "scheduleID": "schedule-id",
   "doctorID": "doctor-id",
   "patientID": "user-id",
   "patientName": "Foo Bar",
-
-  "status": "re-register", // "waiting" | "delayed" | "void"
+  "status": "re-register", // "waiting" | "on-process" | "delayed" | "void"
+  "createdAt": "timestamp",
+  "validatedAt": "timestamp", // re-register timestamp
+  "startAt": "timestamp", // called by doctor timestamp
+  "endAt": "timestamp", // finish with doctor timestamp
   "queueNum": 0
 }
 ```
@@ -271,7 +292,11 @@ Queue {
   "doctorID": "doctor-id",
   "patientID": "user-id",
   "patientName": "Foo Bar",
-  "validated": true,
+  "status": "re-register", // "waiting" | "on-process" | "delayed" | "void"
+  "createdAt": "timestamp",
+  "validatedAt": "timestamp", // re-register timestamp
+  "startAt": "timestamp", // called by doctor timestamp
+  "endAt": "timestamp", // finish with doctor timestamp
   "queueNum": 0
 }
 ```
