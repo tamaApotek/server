@@ -1,4 +1,4 @@
-import { Doctor } from "../model/doktor";
+import { Doctor } from "../model/doctor";
 import { DoctorRepository } from "./repository";
 
 export interface DoctorUsecase {

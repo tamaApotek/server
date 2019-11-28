@@ -4,10 +4,10 @@
 export interface Doctor {
   id: string;
   /** auth-uid indicate authenticated user or not */
-  uid: string | null;
+  uid: string;
   /** indicate authenticated user or not */
+  username: string;
   specialistID: string;
-  username: string | null;
   fullName: string;
   /** specialist title */
   title: string;

@@ -3,7 +3,7 @@ import { Router, RequestHandler } from "express";
 import { UserUsecase } from "../user/usecase";
 import { DoctorUsecase } from "../doctor/usecase";
 
-import { Doctor } from "../model/doktor";
+import { Doctor } from "../model/doctor";
 
 import { verifyToken } from "../helper/jwt";
 import { ErrorCode } from "../helper/errors";
