@@ -4,7 +4,6 @@
 export interface Schedule {
   id: string;
   doctorID: string;
-  doctorName: string;
   /** iso day week 1 ~ 7 */
   dayOfWeek: number;
   /** 0 ~ 23 */

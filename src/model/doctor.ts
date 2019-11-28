@@ -7,8 +7,12 @@ export interface Doctor {
   uid: string;
   /** indicate authenticated user or not */
   username: string;
+  /**
+   * general specialist id.
+   * e.g General Practicioner, Ob Gyn, etc
+   */
   specialistID: string;
+  /** specialist and other degree */
+  degrees: string[];
   fullName: string;
-  /** specialist title */
-  title: string;
 }
