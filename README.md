@@ -175,6 +175,79 @@ Response {
 
 ---
 
+### `/schedules/doctors`
+
+_`GET`_
+
+Get all schedules of all doctors
+
+```json
+Headers {
+  "token": "token"
+}
+```
+
+---
+
+### `/schedules/doctors/:id`
+
+_`POST`_
+
+Add schedule for doctor `:id`
+
+```json
+Headers {
+  "token": "token"
+}
+```
+
+_`GET`_
+
+Get all schedules of doctor `:id`
+
+```json
+Headers {
+  "token": "token"
+}
+```
+
+---
+
+### `/schedules/:id`
+
+_`PUT`_
+
+Update schedule with `:id`
+
+```json
+Headers {
+  "token": "token"
+}
+
+Body {
+  "id": "string",
+  /** user-id */
+  "doctorID": "string",
+  "doctorName": "string",
+  /** iso day week 1 ~ 7 */
+  "dayOfWeek": "number",
+  /** 0 ~ 23 */
+  "startHour": "number",
+  /** 0 ~ 59 */
+  "startMinute": "number",
+  /** 0 ~ 23 */
+  "endHour": "number",
+  /** 0 ~ 59 */
+  "endMinute": "number",
+  /** queue limit */
+  "limit": "number",
+  /** "open" | "close" */
+  "status": "open"
+}
+```
+
+---
+
 ### `/schedules/:id-:date/queue`
 
 #### Queue
