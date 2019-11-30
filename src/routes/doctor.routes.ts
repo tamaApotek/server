@@ -20,11 +20,11 @@ const _makeDoctor = (doctor: Doctor): Doctor => {
 
   return {
     id: doctor.id || "",
-    uid: doctor.uid || null,
-    username: doctor.username || null,
+    uid: doctor.uid || "",
+    username: doctor.username || "",
     specialistID: doctor.specialistID,
     fullName: doctor.fullName.trim(),
-    title: (doctor.title || "").trim()
+    degrees: doctor.degrees || []
   };
 };
 

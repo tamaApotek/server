@@ -8,7 +8,7 @@ import { ErrorCode } from "../helper/errors";
 import errors from "../constants/error";
 import userRole, { UserRole } from "../constants/userRole";
 import { DoctorRepository } from "../doctor/repository";
-import { Doctor } from "../model/doktor";
+import { Doctor } from "../model/doctor";
 
 export interface UserUsecase {
   create(userCred: Auth, userProfile: User): Promise<void>;
@@ -95,10 +95,10 @@ export default function makeUserUsecase(repos: {
           const doctor: Doctor = {
             username: userProfile.username,
             uid: userID,
-            title: "",
             specialistID: "",
             id: userID,
-            fullName: userProfile.fullName
+            fullName: userProfile.fullName,
+            degrees: []
           };
           await doctorRepository.addDoctor(doctor);
         } catch (error) {

@@ -10,11 +10,11 @@ export interface DoctorRepository {
 const _serializeSingleDoctor = (doctor: Doctor): Doctor => {
   return {
     id: doctor.id,
-    uid: doctor.uid || null,
-    username: doctor.username || null,
+    uid: doctor.uid || "",
+    username: doctor.username || "",
     specialistID: doctor.specialistID,
     fullName: doctor.fullName,
-    title: doctor.title
+    degrees: doctor.degrees || []
   };
 };
 
