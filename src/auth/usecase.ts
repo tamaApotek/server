@@ -7,10 +7,10 @@ export interface AuthUsecase {
 
 export default function makeAuthUsecase(repos: {
   authRepository: AuthRepository;
-  jwt: typeof import("jsonwebtoken");
-  bcript: typeof import("bcryptjs");
+  // jwt: typeof import("jsonwebtoken");
+  // bcript: typeof import("bcryptjs");
 }): AuthUsecase {
-  const { authRepository, jwt, bcript } = repos;
+  const { authRepository } = repos;
   return {
     verifyToken: authRepository.verifyToken
   };
