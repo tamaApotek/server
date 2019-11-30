@@ -22,6 +22,7 @@ import makeDoctorRouter from "./routes/doctor.routes";
 import makeEmailRepository from "./email/repository";
 import setSendgrid from "./frameworks/email/sendgrid";
 import initFirebase from "./frameworks/firebase/firebase";
+import makeAuthUsecase from "./auth/usecase";
 
 const main = async () => {
   const firebase = initFirebase();
@@ -56,9 +57,10 @@ const main = async () => {
     doctorRepository
   });
   const doctorUsecase = makeDoctorUsecase({ doctorRepository });
+  const authUsecase = makeAuthUsecase({ authRepository });
 
   // Routes handlers
-  const userRouter = makeUserRouter({ userUsecase });
+  const userRouter = makeUserRouter({ userUsecase, authUsecase });
   const doctorRouter = makeDoctorRouter({ userUsecase, doctorUsecase });
 
   // Build app
