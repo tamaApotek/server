@@ -4,6 +4,7 @@ import { Document } from "mongoose";
 export interface DoctorRepository {
   /** return doctor-id */
   addDoctor(doctor: Doctor): Promise<string>;
+  findAll(): Promise<Doctor[]>;
   findSpecialist(specialistID: string): Promise<Doctor[]>;
 }
 
@@ -51,6 +52,15 @@ export default async function makeDoctorRepository(
     addDoctor: async (doctor: Doctor) => {
       const res = await DoctorModel.create(doctor);
       return res.id;
+    },
+
+    findAll: async () => {
+      const doctors = await DoctorModel.find({})
+        // for text case insensitive sort
+        .collation({ locale: "en" }) // or "id" doesn't matter
+        .sort({ fullName: 1 });
+
+      return doctors.map(_serializeSingleDoctor);
     },
 
     findSpecialist: async specialistID => {
