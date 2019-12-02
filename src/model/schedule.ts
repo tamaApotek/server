@@ -1,3 +1,5 @@
+import { ScheduleStatus } from "../constants/scheduleStatus";
+
 /**
  * Schedule represent doctor's schedule for each day'
  */
@@ -17,5 +19,5 @@ export interface Schedule {
   /** queue limit */
   limit: number;
   /** open | close |  */
-  status: "open" | "close" | "holiday";
+  status: ScheduleStatus;
 }
