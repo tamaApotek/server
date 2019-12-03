@@ -12,8 +12,11 @@ export interface ScheduleUsecase {
   findAllDoctorSchedules(): Promise<DoctorSchedule[]>;
   /** find schedules of doctor by id */
   findOneDoctorSchedules(doctorID: string): Promise<Schedule[]>;
-  /** create schedule and return schedule id */
-  createScheduleForDoctor(): Promise<string>;
+  /** create doctor's schedules and return schedule id */
+  createDoctorSchedules(
+    doctorID: string,
+    schedules: Schedule[]
+  ): Promise<Schedule[]>;
   /** update one schedule by id */
   updateSchedule(scheduleID: string, schedule: Schedule): Promise<void>;
   /** create queue for schedule with id at date. returns queue id */
@@ -31,6 +34,53 @@ export default function makeScheduleUsecase(repos: {
   scheduleRepository: ScheduleRepository;
 }): ScheduleUsecase {
   const { doctorRepository, scheduleRepository } = repos;
+
+  const _findOverlapping = (
+    existingSchedules: Schedule[],
+    incomingSchedules: Schedule[]
+  ): Schedule | null => {
+    if (!existingSchedules || existingSchedules.length === 0) {
+      return null;
+    }
+    // map schedule for validation
+    const scheduleDayMap: { [day: number]: Schedule[] } = {};
+
+    existingSchedules.forEach(sch => {
+      if (!scheduleDayMap[sch.dayOfWeek]) {
+        scheduleDayMap[sch.dayOfWeek] = [];
+      }
+      scheduleDayMap[sch.dayOfWeek].push(sch);
+    });
+
+    const doubleEntry = incomingSchedules.find(sch => {
+      if (!scheduleDayMap[sch.dayOfWeek]) {
+        return false;
+      }
+
+      const existingSchDay = scheduleDayMap[sch.dayOfWeek];
+      for (let existSch of existingSchDay) {
+        // is start time overlapping
+        if (
+          existSch.startHour <= sch.startHour &&
+          sch.startHour <= existSch.endHour
+        ) {
+          return true;
+        }
+        // is end time overlapping
+        if (
+          existSch.startHour <= sch.endHour &&
+          sch.endHour <= existSch.endHour
+        ) {
+          return true;
+        }
+      }
+
+      return false;
+    });
+
+    return doubleEntry || null;
+  };
+
   return {
     findAllDoctorSchedules: async () => {
       let doctors: Doctor[];
@@ -79,6 +129,39 @@ export default function makeScheduleUsecase(repos: {
       }
 
       return schedules;
+    },
+
+    createDoctorSchedules: async (doctorID, schedules) => {
+      const existingSchedules = await scheduleRepository.findByDoctorID(
+        doctorID
+      );
+
+      const overlappingSchedule = _findOverlapping(
+        existingSchedules,
+        schedules
+      );
+
+      if (overlappingSchedule) {
+        throw new ErrorCode(errors.INVALID, "Overlapping schedule exists");
+      }
+
+      try {
+        let insertSchedule = await scheduleRepository.createMany(schedules);
+        return insertSchedule;
+      } catch (error) {
+        console.error(error);
+        throw new ErrorCode(errors.INTERNAL, "Internal server error");
+      }
+    },
+
+    updateSchedule: async () => {},
+
+    createQueue: async () => {
+      return "";
+    },
+
+    findScheduleQueue: async () => {
+      return [];
     }
   };
 }

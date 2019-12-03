@@ -177,16 +177,10 @@ Response {
 
 ### `/schedules`
 
-_`POST`_
-
-add schedule
+#### Schedule
 
 ```json
-Headers {
-  "token": "token"
-}
-
-Body {
+{
   "id": "string",
   /** user-id */
   "doctorID": "string",
@@ -205,6 +199,20 @@ Body {
   "limit": "number",
   /** "open" | "close" */
   "status": "open"
+}
+```
+
+_`POST`_
+
+add [`Schedule`](####schedule)
+
+```js
+Headers {
+  "token": "token"
+}
+
+Body {
+  ...Schedule
 }
 ```
 
@@ -228,11 +236,15 @@ Headers {
 
 _`POST`_
 
-Add schedule for doctor `:id`
+Add [`Schedule`](####schedule) for doctor `:id`
 
-```json
+```typescript
 Headers {
-  "token": "token"
+  token: "token"
+}
+
+Body {
+  schedules: Schedule[]
 }
 ```
 

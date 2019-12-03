@@ -3,6 +3,7 @@ import { DoctorRepository } from "./repository";
 
 export interface DoctorUsecase {
   addDoctor(doctor: Doctor): Promise<string>;
+  findByID(doctorID: string): Promise<Doctor | null>;
   findSpecialist(specialistID: string): Promise<Doctor[]>;
 }
 
@@ -19,6 +20,11 @@ export default function makeDoctorUsecase({
       } catch (error) {
         throw error;
       }
+    },
+
+    findByID: async doctorID => {
+      const doctor = await doctorRepository.findByID(doctorID);
+      return doctor;
     },
 
     findSpecialist: async specialistID => {

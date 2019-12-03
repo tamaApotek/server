@@ -5,6 +5,7 @@ export interface DoctorRepository {
   /** return doctor-id */
   addDoctor(doctor: Doctor): Promise<string>;
   findAll(): Promise<Doctor[]>;
+  findByID(doctorID: string): Promise<Doctor | null>;
   findSpecialist(specialistID: string): Promise<Doctor[]>;
 }
 
@@ -40,7 +41,7 @@ export default async function makeDoctorRepository(
   const DoctorModel = mongoose.model<Doctor & Document>("Doctor", doctorSchema);
 
   if (process.env.NODE_ENV !== "production") {
-    await DoctorModel.ensureIndexes({ role: 1, fullName: "text" });
+    await DoctorModel.createIndexes();
 
     // const indexes = await UserProfileModel.listIndexes();
     // console.group("User Profile Indexes");
@@ -61,6 +62,14 @@ export default async function makeDoctorRepository(
         .sort({ fullName: 1 });
 
       return doctors.map(_serializeSingleDoctor);
+    },
+
+    findByID: async doctorID => {
+      const doctor = await DoctorModel.findById(doctorID);
+      if (!doctor) {
+        return null;
+      }
+      return _serializeSingleDoctor(doctor);
     },
 
     findSpecialist: async specialistID => {
