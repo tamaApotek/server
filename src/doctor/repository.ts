@@ -40,14 +40,7 @@ export default async function makeDoctorRepository(
 
   const DoctorModel = mongoose.model<Doctor & Document>("Doctor", doctorSchema);
 
-  if (process.env.NODE_ENV !== "production") {
-    await DoctorModel.createIndexes();
-
-    // const indexes = await UserProfileModel.listIndexes();
-    // console.group("User Profile Indexes");
-    // console.log(JSON.stringify(indexes, null, 2));
-    // console.groupEnd();
-  }
+  await DoctorModel.createIndexes();
 
   return {
     addDoctor: async (doctor: Doctor) => {

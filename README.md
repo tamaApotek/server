@@ -53,11 +53,12 @@ Add new user
 
 ```json
 Body {
-  "username": "username",
-  "password": "password",
-  "role": "patient",
   "fullName": "John Doe",
-  "phoneNumber: "+62..." // [optional]
+  "email": "email@email.com",
+  "phoneNumber": "+62...",
+  "password": "password",
+  "username": "username",
+  "role": "patient",
 }
 ```
 
@@ -66,6 +67,13 @@ Body {
 #### PUT
 
 ##### `?action=reset-password`
+
+###### Step
+
+1. User forgot password
+2. Verify with phone number
+3. User authenticated with phone number
+4. Send new password to server
 
 Reset user password with a new one. User must be authenticated
 
