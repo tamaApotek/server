@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
-import { auth } from "firebase-admin";
+import admin from "firebase-admin";
 
-const authMiddleware: RequestHandler = async (req, res, next) => {
+const auth: RequestHandler = async (req, res, next) => {
   let token = req.headers.token as string;
   if (!token) {
     res.sendStatus(403);
@@ -11,7 +11,7 @@ const authMiddleware: RequestHandler = async (req, res, next) => {
     token = token.slice("bearer ".length);
   }
   try {
-    const decode = await auth().verifyIdToken(token);
+    const decode = await admin.auth().verifyIdToken(token);
     res.locals.user = decode;
     next();
   } catch (err) {
@@ -19,4 +19,4 @@ const authMiddleware: RequestHandler = async (req, res, next) => {
   }
 };
 
-export default authMiddleware;
+export default auth;
