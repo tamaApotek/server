@@ -143,7 +143,7 @@ export default function makeScheduleUsecase(repos: {
       );
 
       if (overlappingSchedule) {
-        throw new ErrorCode(errors.INVALID, "Overlapping schedule exists");
+        throw new ErrorCode(errors.CONFLICT, "Overlapping schedule exists");
       }
 
       try {

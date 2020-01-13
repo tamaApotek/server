@@ -38,7 +38,7 @@ export default function makeUserUsecase(repos: {
     create: async (userCred, userProfile) => {
       const exists = await userRepository.findByUsername(userProfile.username);
       if (exists) {
-        const error = new ErrorCode(errors.INVALID, "Username already exists");
+        const error = new ErrorCode(errors.CONFLICT, "Username already exists");
         throw error;
       }
 
@@ -55,14 +55,14 @@ export default function makeUserUsecase(repos: {
         switch (error.code) {
           case "auth/email-already-exists": {
             const error = new ErrorCode(
-              errors.INVALID,
+              errors.CONFLICT,
               "User with this email already exists"
             );
             throw error;
           }
           case "auth/phone-number-already-exists": {
             const error = new ErrorCode(
-              errors.INVALID,
+              errors.CONFLICT,
               "User with this phone number already exists"
             );
             throw error;
