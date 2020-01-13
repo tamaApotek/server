@@ -1,4 +1,4 @@
-import { Doctor } from "../model/doctor";
+import { Doctor } from "../../model/doctor";
 import { DoctorRepository } from "./repository";
 
 export interface DoctorUsecase {
@@ -15,12 +15,8 @@ export default function makeDoctorUsecase({
 }): DoctorUsecase {
   return {
     addDoctor: async doctor => {
-      try {
-        const doctorID = await doctorRepository.addDoctor(doctor);
-        return doctorID;
-      } catch (error) {
-        throw error;
-      }
+      const doctorID = await doctorRepository.addDoctor(doctor);
+      return doctorID;
     },
 
     findByID: async doctorID => {
@@ -29,20 +25,12 @@ export default function makeDoctorUsecase({
     },
 
     findSpecialist: async specialistID => {
-      try {
-        const doctors = await doctorRepository.findSpecialist(specialistID);
-        return doctors;
-      } catch (error) {
-        throw error;
-      }
+      const doctors = await doctorRepository.findSpecialist(specialistID);
+      return doctors;
     },
     findAll: async () => {
-      try {
-        const doctors = await doctorRepository.findAll();
-        return doctors;
-      } catch (error) {
-        throw error;
-      }
+      const doctors = await doctorRepository.findAll();
+      return doctors;
     }
   };
 }

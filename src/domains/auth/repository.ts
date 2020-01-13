@@ -1,8 +1,8 @@
 import { auth } from "firebase-admin";
-import { Auth } from "../model/auth";
-import { TokenPayload } from "../model/tokenPayload";
+import { Auth } from "../../model/auth";
+import { TokenPayload } from "../../model/tokenPayload";
 
-import { hashPassword, comparePassword } from "../helper/bcrypt";
+import { hashPassword, comparePassword } from "../../helper/bcrypt";
 
 export interface AuthRepository {
   create(userCred: Omit<Auth, "uid">): Promise<string>;

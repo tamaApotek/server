@@ -1,8 +1,8 @@
 import { Document } from "mongoose";
 
-import { User } from "../model/user";
-import userSerializer from "../serializer/user";
-import { UserRole } from "../constants/userRole";
+import { User } from "../../model/user";
+import userSerializer from "../../serializer/user";
+import { UserRole } from "../../constants/userRole";
 
 export interface UserRepository {
   createUser(user: User): Promise<void>;

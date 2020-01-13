@@ -1,11 +1,11 @@
-import { DoctorSchedule } from "../model/doctorSchedule";
-import { Schedule } from "../model/schedule";
-import { Queue } from "../model/queue";
+import { DoctorSchedule } from "../../model/doctorSchedule";
+import { Schedule } from "../../model/schedule";
+import { Queue } from "../../model/queue";
 import { DoctorRepository } from "../doctor/repository";
 import { ScheduleRepository } from "./repository";
-import { Doctor } from "../model/doctor";
-import { ErrorCode } from "../helper/errors";
-import errors from "../constants/error";
+import { Doctor } from "../../model/doctor";
+import { ErrorCode } from "../../helper/errors";
+import errors from "../../constants/error";
 
 export interface ScheduleUsecase {
   /** find all schedules of all doctor */
@@ -52,13 +52,14 @@ export default function makeScheduleUsecase(repos: {
       scheduleDayMap[sch.dayOfWeek].push(sch);
     });
 
+    // find overlapping schedule in day
     const doubleEntry = incomingSchedules.find(sch => {
       if (!scheduleDayMap[sch.dayOfWeek]) {
         return false;
       }
 
       const existingSchDay = scheduleDayMap[sch.dayOfWeek];
-      for (let existSch of existingSchDay) {
+      for (const existSch of existingSchDay) {
         // is start time overlapping
         if (
           existSch.startHour <= sch.startHour &&
@@ -146,7 +147,7 @@ export default function makeScheduleUsecase(repos: {
       }
 
       try {
-        let insertSchedule = await scheduleRepository.createMany(schedules);
+        const insertSchedule = await scheduleRepository.createMany(schedules);
         return insertSchedule;
       } catch (error) {
         console.error(error);

@@ -1,5 +1,5 @@
-import { User } from "../model/user";
-import { Schedule } from "../model/schedule";
+import { User } from "../../model/user";
+import { Schedule } from "../../model/schedule";
 
 export interface AppointmentUsecase {
   findAllDoctor(): Promise<User[] | null>;

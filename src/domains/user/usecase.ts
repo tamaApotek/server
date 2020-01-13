@@ -1,14 +1,15 @@
 import { AuthRepository } from "../auth/repository";
 import { UserRepository } from "../user/repository";
-import { User } from "../model/user";
-import { Auth } from "../model/auth";
-
-import { ErrorCode } from "../helper/errors";
-
-import errors from "../constants/error";
-import userRole, { UserRole } from "../constants/userRole";
 import { DoctorRepository } from "../doctor/repository";
-import { Doctor } from "../model/doctor";
+
+import { User } from "../../model/user";
+import { Auth } from "../../model/auth";
+import { Doctor } from "../../model/doctor";
+
+import { ErrorCode } from "../../helper/errors";
+
+import errors from "../../constants/error";
+import userRole, { UserRole } from "../../constants/userRole";
 
 export interface UserUsecase {
   create(userCred: Auth, userProfile: User): Promise<void>;
@@ -35,7 +36,7 @@ export default function makeUserUsecase(repos: {
   const { authRepository, userRepository, doctorRepository } = repos;
   return {
     create: async (userCred, userProfile) => {
-      let exists = await userRepository.findByUsername(userProfile.username);
+      const exists = await userRepository.findByUsername(userProfile.username);
       if (exists) {
         const error = new ErrorCode(errors.INVALID, "Username already exists");
         throw error;
@@ -78,6 +79,7 @@ export default function makeUserUsecase(repos: {
         }
       }
 
+      // eslint-disable-next-line require-atomic-updates
       userProfile.uid = userID;
 
       try {
@@ -91,30 +93,22 @@ export default function makeUserUsecase(repos: {
       }
 
       if (userProfile.role === userRole.DOCTOR) {
-        try {
-          const doctor: Doctor = {
-            username: userProfile.username,
-            uid: userID,
-            specialistID: "",
-            id: userID,
-            fullName: userProfile.fullName,
-            degrees: []
-          };
-          await doctorRepository.addDoctor(doctor);
-        } catch (error) {
-          throw error;
-        }
+        const doctor: Doctor = {
+          username: userProfile.username,
+          uid: userID,
+          specialistID: "",
+          id: userID,
+          fullName: userProfile.fullName,
+          degrees: []
+        };
+        await doctorRepository.addDoctor(doctor);
       }
 
       return;
     },
 
     resetPassword: async (uid, newPassword) => {
-      try {
-        await authRepository.resetPassword(uid, newPassword);
-      } catch (error) {
-        throw error;
-      }
+      await authRepository.resetPassword(uid, newPassword);
     },
 
     // handled by firebase client sdk

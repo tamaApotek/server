@@ -1,4 +1,4 @@
-import { Doctor } from "../model/doctor";
+import { Doctor } from "../../model/doctor";
 import { Document } from "mongoose";
 
 export interface DoctorRepository {

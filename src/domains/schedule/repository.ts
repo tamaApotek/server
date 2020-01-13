@@ -1,4 +1,4 @@
-import { Schedule } from "../model/schedule";
+import { Schedule } from "../../model/schedule";
 import { Document } from "mongoose";
 
 const _serializeSingleSchedule = (schedule: Schedule & Document): Schedule => {
