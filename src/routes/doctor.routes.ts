@@ -1,7 +1,7 @@
 import { Router, RequestHandler } from "express";
 
-import { UserUsecase } from "../user/usecase";
-import { DoctorUsecase } from "../doctor/usecase";
+import { UserUsecase } from "../domains/user/usecase";
+import { DoctorUsecase } from "../domains/doctor/usecase";
 
 import { Doctor } from "../model/doctor";
 

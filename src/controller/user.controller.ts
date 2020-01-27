@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
 
-import { UserUsecase } from "../user/usecase";
+import { UserUsecase } from "../domains/user/usecase";
 import makeAuth from "../serializer/auth";
 import buildMakeUser, { User } from "../model/user";
 import userSerializer from "../serializer/user";

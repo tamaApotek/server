@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import { AuthUsecase } from "../auth/usecase";
+import { AuthUsecase } from "../domains/auth/usecase";
 
 export interface AuthController {
   verifyToken: RequestHandler;

@@ -1,7 +1,7 @@
 import { Router, RequestHandler } from "express";
 
-import { UserUsecase } from "../user/usecase";
-import { AuthUsecase } from "../auth/usecase";
+import { UserUsecase } from "../domains/user/usecase";
+import { AuthUsecase } from "../domains/auth/usecase";
 
 import { User } from "../model/user";
 import { Auth } from "../model/auth";

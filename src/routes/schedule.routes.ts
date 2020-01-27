@@ -1,7 +1,7 @@
 import { Router, RequestHandler } from "express";
-import { DoctorUsecase } from "../doctor/usecase";
-import { ScheduleUsecase } from "../schedule/usecase";
-import { AuthUsecase } from "../auth/usecase";
+import { DoctorUsecase } from "../domains/doctor/usecase";
+import { ScheduleUsecase } from "../domains/schedule/usecase";
+import { AuthUsecase } from "../domains/auth/usecase";
 import { Schedule } from "../model/schedule";
 import { ErrorCode } from "../helper/errors";
 import errors from "../constants/error";
